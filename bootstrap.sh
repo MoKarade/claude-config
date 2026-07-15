@@ -15,11 +15,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-ensure_dir() { [[ -d "$1" ]] || { $DRY_RUN && echo "  [dry] mkdir $1" && return; mkdir -p "$1"; echo "  [+] cree $1"; }; }
+ensure_dir() {
+    [[ -d "$1" ]] && return 0
+    if $DRY_RUN; then echo "  [dry] mkdir $1"; return 0; fi
+    mkdir -p "$1"; echo "  [+] cree $1"
+}
 backup_existing() {
-    [[ -e "$1" || -L "$1" ]] || return
+    # return 0 explicite : avec set -e, un `return` implicite propage le code 1
+    # du test quand la cible n'existe pas, et tue le script sur install fraiche.
+    [[ -e "$1" || -L "$1" ]] || return 0
     local name; name="$(basename "$1")"
-    $DRY_RUN && { echo "  [dry] backup $1"; return; }
+    if $DRY_RUN; then echo "  [dry] backup $1"; return 0; fi
     mkdir -p "$2"; mv "$1" "$2/$name"; echo "  [b] backup $name"
 }
 

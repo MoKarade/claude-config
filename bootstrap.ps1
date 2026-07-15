@@ -34,6 +34,7 @@ function Backup-Existing($target, $backupRoot) {
         $name = Split-Path $target -Leaf
         $backupPath = Join-Path $backupRoot $name
         if ($DryRun) { Log "  [dry] backup $target -> $backupPath" 'DarkGray'; return }
+        if (-not (Test-Path $backupRoot)) { New-Item -Path $backupRoot -ItemType Directory -Force | Out-Null }
         Move-Item -Path $target -Destination $backupPath -Force
         Log "  [b] backup $name -> $backupRoot" 'Yellow'
     }
