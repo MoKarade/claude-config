@@ -57,9 +57,17 @@
 
 ## 7. Documentation
 
-- ✅ ADR pour décisions architecturales (`decisions/<NNNN>-<slug>.md`).
-- ✅ Journal de session (`JOURNAL.md`) tenu à chaque session importante.
+- ✅ **Structure commune à tous les dépôts du hub : [`conventions/STRUCTURE-DEPOT.md`](./conventions/STRUCTURE-DEPOT.md).**
+  Arborescence, squelette de `CLAUDE.md`, ordre des sections. Écrite là et nulle part
+  ailleurs — un dépôt s'y conforme et y renvoie, il ne la recopie pas.
+- ✅ ADR pour décisions architecturales : **`docs/adr/<NNNN>-<slug>.md`**.
+  *(Cette ligne disait `decisions/` jusqu'au 20/08/2026, alors que DriveAI, JobAI et
+  BatchChef écrivaient déjà dans `docs/adr/` — seul Hubperso suivait la règle. Corrigé dans
+  le sens de l'usage, pas l'inverse.)*
 - ✅ Mettre à jour la doc quand on change le code (doc périmée = pire que pas de doc).
+- ✅ **Un chiffre au présent dans une doc rote.** « 813 tests », « frein à 110 $ », « la
+  campagne est finie » : personne ne les relit, et rien ne signale qu'ils sont devenus faux.
+  Soit on les date (« au 20/08 : … »), soit on renvoie à la source qui fait foi.
 - ✅ Diagrammes Mermaid (rendu GitHub natif).
 
 ## 8. ECC — Everything Claude Code
@@ -90,9 +98,25 @@ Liste complète : `ls ~/.claude/agents/`.
 
 ## 9. Projets actifs
 
-| Projet | Repo | Stack | Statut |
-|---|---|---|---|
-| **Personal Data Hub** | `MoKarade/hub` | Python 3.13 / FastAPI / Next.js 15 / Postgres+pgvector / Ollama | Phase 7+ — production-ready |
+L'écosystème du hub perso — huit dépôts, tous sur `hubperso.com` ou un sous-domaine.
+*(Cette table listait `MoKarade/hub` en Python/FastAPI/Ollama jusqu'au 20/08/2026 : un projet
+qui n'est aucun des huit, dans une stack qu'aucun n'utilise.)*
+
+| Dépôt | Rôle | Stack |
+|---|---|---|
+| `Hubperso` | Le tableau de bord — consomme le contrat, ne le définit pas | Next.js 15 · Neon · Auth.js v5 |
+| `hub-contract` | Le contrat partagé (types + schémas Zod) | TypeScript · Zod |
+| `app-template` | Le squelette à forker pour une nouvelle app | Next.js 15 · Auth.js v5 |
+| `FinanceAI` | Patrimoine, projections, fiscalité | Next.js · Postgres |
+| `DriveAI` | Classement automatique du Drive | Apps Script + Vercel + SPA |
+| `BatchChef` | Batchs de cuisine, listes d'épicerie | Next.js 15 · Neon · MCP |
+| `JobAI` | Veille d'emploi et suivi de candidatures | Next.js 15 · Neon · MCP |
+| `CarAI` | Télémétrie du véhicule (Smartcar, Toyota) | Next.js 15 · Neon · MCP |
+
+**Accès** : la connexion est unique (cookie partagé sur `.hubperso.com`), l'autorisation est
+**par app** et se gère depuis `hubperso.com/administration`. `AUTHORIZED_EMAIL` n'est pas une
+allowlist : c'est le PROPRIÉTAIRE, vérifié sans réseau pour qu'une panne du hub n'enferme
+personne dehors. Voir l'ADR 0001 de Hubperso.
 
 ## 10. PCs
 
