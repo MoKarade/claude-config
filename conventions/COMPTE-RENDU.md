@@ -91,6 +91,12 @@ Le résumé en une phrase, comme conclusion.
 **Volume** : ~15 lignes hors liste de fichiers. Dépasser seulement si le sujet l'exige
 réellement — jamais pour meubler.
 
+⚠️ **Ce volume porte sur ce qui est ÉCRIT, jamais sur l'effort fourni.** Les deux se
+confondent facilement et l'erreur serait chère : FinanceAI pose « qualité d'abord, coût tokens
+NON contraint — passes multiples, panels d'agents, vérifs exhaustives », et cette règle reste
+entière. Chercher moins pour écrire moins est exactement le contraire de ce qui est demandé.
+Un rapport court sur un travail approfondi est le but ; un travail superficiel n'en est jamais un.
+
 ---
 
 ## 5. Vulgarisation
@@ -148,8 +154,21 @@ continuer, et le signaler dans « Points d'attention ». **Exception** : si le c
 ## 7. Questions et cadrage
 
 **Avant de commencer** : regrouper **toutes** les questions de cadrage en **un seul batch**,
-y compris ce qui définit « fini » (la DoD exacte). Une fois le cadrage obtenu, exécuter en
-continu jusqu'à l'objectif, puis s'arrêter.
+y compris ce qui définit « fini » (la DoD exacte).
+
+**Plan d'abord, TOUJOURS** pour une tâche non triviale : après le cadrage, un **plan court**
+et **l'OK de Marc avant de coder**. Cette porte vient de FinanceAI, où elle protégeait du code
+money-critical ; Marc l'a étendue aux neuf dépôts le 21/08/2026. Elle ne contredit pas la règle
+d'exécution continue — elle en fixe le point de départ : on s'arrête UNE fois, sur le plan, pas
+trois fois pendant le travail.
+
+**Puis exécuter en continu jusqu'à l'objectif, et s'arrêter là.** Ni avant, ni au-delà. Ne pas
+s'arrêter en pleine tâche : chaque tour contient des appels d'outils tant que ce n'est pas fini.
+Jamais « je vais faire X » suivi d'un arrêt. On ne s'arrête que sur une vraie question bloquante,
+ou une fois la tâche finie et vérifiée.
+
+**Une commande de cadrage qui s'arrête n'est pas une violation** : c'est son objectif
+(`/phase` de DriveAI, `/new-feature` de FinanceAI). Elles restent telles quelles.
 
 **Format des questions** : privilégier le **choix multiple cliquable** (outil de question
 structurée) plutôt que des questions ouvertes en prose. Numérotées, avec des options
@@ -162,8 +181,16 @@ mutuellement exclusives et **une recommandation par question**.
 **Langue** : français partout — sortie, commentaires de code, messages de commit,
 descriptions de PR, documents générés.
 
-**Emojis** : uniquement les codes de gravité déjà en place (🔴 bloquant / 🟠 à corriger /
-🟡 suggestion). Aucun emoji décoratif.
+**Emojis** : trois usages, et seulement trois.
+1. Les codes de **gravité** déjà en place : 🔴 bloquant / 🟠 à corriger / 🟡 suggestion.
+2. Les **marqueurs de statut de document** dans `BACKLOG.md` et `HANDOVER.md` (⬜ 🟦 ✅ ⏸️) et
+   les ⚠️ des garde-fous. Formulation de DriveAI, retenue par Marc le 21/08/2026 : ce sont des
+   marqueurs de document, **pas du décorum**. Ils ne sont donc ni de la gravité ni de la
+   décoration — d'où cette troisième catégorie, qui manquait à la première version.
+   ⚠️ Ils sont aussi **lus par une machine** : `scripts/docAJour.mjs` (Hubperso) reconnaît le
+   format `| tableau emoji |` pour vérifier que le backlog suit le code. Les retirer casserait
+   ce contrôle en silence.
+3. Rien d'autre. Aucun emoji décoratif, aucun emoji dans l'UI produit ni dans un commit.
 
 **Labels de confiance** : sur toute affirmation non triviale **et sur toute
 recommandation** — `[Certain]` / `[Probable]` / `[Supposition]` / `[À vérifier]`.
@@ -180,3 +207,16 @@ fait neuf n'est apporté — mais chercher une solution, pas juste dire non.
 
 Ne jamais élargir le périmètre sans demande explicite. **Proposer ≠ faire.**
 Un travail « pendant qu'on y est » est un travail non demandé.
+
+---
+
+## 10. Historique des amendements
+
+Le texte initial a été validé tel quel par Marc. Ce qui suit a été ajouté **sur son arbitrage
+explicite**, après l'audit des neuf dépôts — jamais de ma propre initiative.
+
+| Date | Section | Amendement | Pourquoi |
+|---|---|---|---|
+| 2026-08-21 | §7 | La porte de plan (« plan court + OK avant de coder »), généralisée depuis FinanceAI | La convention n'avait aucune porte d'approbation ; FinanceAI en avait une. Marc a étendu la porte plutôt que de la supprimer. |
+| 2026-08-21 | §8 | Troisième catégorie d'emoji : les marqueurs de statut de document | ⬜ 🟦 ✅ ⏸️ ne sont ni de la gravité ni de la décoration. La v1 les interdisait sans le vouloir, et `docAJour.mjs` les lit. |
+| 2026-08-21 | §4 | Le volume porte sur l'écrit, pas sur l'effort | Sans ça, « ~15 lignes » se lisait comme une autorisation à chercher moins. |
