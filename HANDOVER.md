@@ -62,10 +62,13 @@ C'est ce que ferme `.github/workflows/copies.yml` : deux jobs, l'un qui teste la
 **sans réseau ni jeton** (`scripts/copiesAJour.mjs`, 8 tests), l'autre qui lit les huit copies
 via l'API et compare. Il tourne à chaque push touchant `conventions/`, et une fois par jour.
 
-⚠️ **Il ÉCHOUE tant que le secret `JETON_LECTURE_DEPOTS` n'est pas posé** — pas de
-`continue-on-error`, pas de garde `if: secrets…` qui sauterait le pas. Sauter le pas rendrait
-le job vert en n'ayant rien vérifié : exactement la panne qu'on cherche à rendre visible.
-Marche à suivre pour le poser : `BACKLOG.md`, `CC-01`.
+✅ **Le secret `JETON_LECTURE_DEPOTS` est posé** (21/08/2026, 19:42) et le premier run est
+vert. Vérifié dans sa SORTIE et pas seulement à sa couleur — « Les 8 copies sont à jour »,
+avec l'empreinte de la source affichée.
+
+⚠️ Il ÉCHOUE si le secret disparaît — pas de `continue-on-error`, pas de garde
+`if: secrets…` qui sauterait le pas. Sauter le pas rendrait le job vert en n'ayant rien
+vérifié : exactement la panne qu'on cherche à rendre visible.
 
 Les quatre états rendus sont **distincts** parce qu'ils appellent des gestes différents :
 `à jour` / `dérivée` / `absente` / `illisible`. Une lecture impossible (401, 403, 5xx) ne se
@@ -74,12 +77,11 @@ alors que c'est la portée du jeton qui est en cause.
 
 ## Blocages / anomalies connues
 
-- ⚠️ **`batchchef-` : la branche `main` n'est PAS une vieille copie de `master`.** Les deux
-  n'ont **aucun ancêtre commun**, et `main` porte **75 commits absents de `master`**, dont un
-  planificateur hebdomadaire (`WeekPlannerPage.tsx`) qui n'existe nulle part sur le tronc
-  actuel. J'avais recommandé sa suppression sur une description fausse (« un `main` mort ») ;
-  la vérification faite avant d'agir l'a invalidée. **Rien n'a été supprimé.** Décision en
-  attente — `BACKLOG.md`, `CC-03`.
+- **`batchchef-` : réglé le 21/08, mais un geste reste à faire.** L'ancienne branche `main`
+  — 75 commits, aucun ancêtre commun avec `master` — est conservée sur
+  `archive/pre-web-2026-04-24`. ⚠️ La branche `main` elle-même **existe encore** : le proxy
+  git de session refuse les suppressions de branche en `403`. À supprimer à la main par Marc.
+  `BACKLOG.md`, `CC-03`.
 - **`app-template` : réglé le 21/08.** Sa branche par défaut, `claude/hopeful-lovelace-4d09zx`,
   a été renommée `main` par Marc.
 
