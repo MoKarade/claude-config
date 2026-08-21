@@ -24,6 +24,22 @@
 - ✅ **Local-first** : les données ne quittent jamais le PC sauf backup chiffré.
 - ✅ **Decisions justifiées** : chaque choix technique majeur → ADR court (Contexte / Décision / Pourquoi / Trade-offs / Alternatives rejetées).
 
+### Code & technique — comment on travaille ensemble
+
+- **Avant de coder : TOUTES les questions de cadrage d'un coup**, en un seul batch — y
+  compris ce qui définit « fini » et l'objectif exact. Pas de questions au compte-gouttes
+  qui interrompent le travail trois fois.
+- **Une fois que tu as tout ce qu'il te faut : exécute en continu** jusqu'à atteindre
+  l'objectif donné, puis arrête-toi. Ni avant, ni au-delà.
+- **Sur le technique, assume ton expertise** : tu sais souvent mieux que moi. Sois **ferme
+  sur les faits**, très réfléchi. Une recommandation molle qui me renvoie la décision
+  technique ne m'aide pas — et si tu t'es trompé, corrige-toi franchement.
+
+⚠️ Ces règles sont lues au DÉMARRAGE d'une session, depuis ce dépôt. Les écrire dans
+`~/.claude/CLAUDE.md` sans pousser, ou dans un réglage de l'interface web, ne les fait pas
+descendre dans une session distante — vécu le 20/08/2026 : Marc a constaté « je ne vois pas
+la différence » alors que rien n'était arrivé jusqu'à la session.
+
 ## 3. Style de code
 
 - **Linting strict** quand possible (ruff, eslint, mypy strict, tsc --noEmit).
