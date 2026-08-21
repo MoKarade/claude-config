@@ -1,0 +1,66 @@
+name: Les copies de la convention
+
+# Ce dépôt n'avait AUCUNE vérification automatisée — c'est d'ailleurs le seul des neuf dans
+# ce cas. Or il porte la SOURCE de deux conventions communes, et le contrôle qui existe dans
+# les huit autres ne regarde que dans un sens : chaque dépôt vérifie que SA copie n'a pas été
+# éditée sur place. Personne ne vérifiait l'autre sens — une source modifiée ici sans
+# propagation laisse les huit dépôts VERTS avec une version périmée.
+#
+# C'est le mode de panne le plus cher : il ressemble trait pour trait au succès.
+on:
+  # Le déclencheur qui sert vraiment : au moment où on crée l'écart, pas le lendemain.
+  push:
+    branches: [main]
+    paths: ["conventions/**"]
+  pull_request:
+    paths: ["conventions/**"]
+  # Et une fois par jour, parce qu'une copie peut être éditée dans SON dépôt sans que rien
+  # ne bouge ici. 12 h UTC, comme les audits hebdomadaires des autres dépôts.
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: copies-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  logique:
+    name: Tests de la logique pure (sans réseau, sans jeton)
+    runs-on: ubuntu-latest
+    # Plafond : sans lui, un job figé tourne SIX HEURES avant d'échouer (vécu sur DriveAI
+    # le 19/08/2026). Ces tests durent moins d'une seconde.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Ce job tourne TOUJOURS, y compris sur une PR d'une fourche et même si le secret
+      # manque : la logique de décision se teste sans rien qui coûte un secret. C'est tout
+      # l'intérêt de l'avoir séparée du transport.
+      - name: Tests
+        run: node --test scripts/*.test.mjs
+
+  copies:
+    name: Les huit copies sont-elles à jour
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # ⚠️ PAS de `continue-on-error`, et PAS de garde `if: secrets...` qui sauterait le pas
+      # quand le jeton manque. Le script échoue lui-même s'il n'a pas de jeton — c'est
+      # voulu. Sauter le pas rendrait le job VERT en n'ayant rien vérifié, ce qui est
+      # exactement la panne qu'on cherche à rendre visible.
+      - name: Comparer les copies à la source
+        env:
+          JETON_LECTURE_DEPOTS: ${{ secrets.JETON_LECTURE_DEPOTS }}
+        run: node scripts/verifierCopies.mjs
