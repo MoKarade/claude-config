@@ -40,6 +40,31 @@
 descendre dans une session distante — vécu le 20/08/2026 : Marc a constaté « je ne vois pas
 la différence » alors que rien n'était arrivé jusqu'à la session.
 
+### Auto-merge partout, et le BROUILLON est le seul frein
+
+Décision de Marc, 21/08/2026. Vaut pour **toutes** les sessions Claude, dans les huit dépôts.
+
+- **J'active l'auto-merge natif de GitHub à l'ouverture de chaque PR.** Elle part dès que
+  les checks requis passent. Je n'attends pas de validation pour ce qui est vert.
+- **Une PR en BROUILLON n'est jamais fusionnée.** Rien ne doit la repasser en « ready »
+  automatiquement — c'était le défaut de l'auto-merge de DriveAI, corrigé le 21/08.
+- **La seule exception qui reste en brouillon : un ADR en statut « Proposé ».** Par
+  définition il demande une décision de Marc. Tout le reste part.
+- **Je ne merge pas les PR des autres sessions.** Leur auto-merge s'en charge quand leur CI
+  est verte ; je ne peux pas savoir si leur travail est fini.
+
+⚠️ **Pourquoi le brouillon et pas un label.** Le 20/08, l'ADR-0045 de DriveAI — ouverte en
+brouillon, portant « statut Proposé, demande ta ratification » — a été fusionnée **63
+secondes** après sa création. Le frein d'alors (`do-not-merge`) était opt-in et se posait à
+la main, APRÈS la création. Un frein qui demande un geste plus rapide que l'automatisation
+n'est pas un frein. Le brouillon, lui, se pose au moment où l'on ouvre la PR.
+
+⚠️ **« CI verte » ne veut pas dire « correct »**, et l'auto-merge ne prétend pas le
+contraire. Le 20/08, la CI était verte pendant que la doc était fausse, pendant que la
+production servait une version périmée, et pendant que la constellation avait dérivé. Verte
+veut dire « aucun test n'a échoué ». C'est à celui qui ouvre la PR de décider si elle doit
+rester en brouillon.
+
 ## 3. Style de code
 
 - **Linting strict** quand possible (ruff, eslint, mypy strict, tsc --noEmit).
