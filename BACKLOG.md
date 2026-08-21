@@ -15,6 +15,19 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
 
 ## Anomalies d'écosystème (constatées le 21/08/2026, non corrigées — hors périmètre)
 
+- [ ] **CC-06 — Une PR de DOCUMENTATION consomme quand même du quota Vercel.** Le 21/08 vers
+  17 h 45, les huit PR de la convention ont chacune déclenché une tentative de déploiement de
+  prévisualisation, toutes refusées : « Resource is limited — more than 100,
+  `api-deployments-free-per-day` ». Le quota est de 100 déploiements/jour **partagé entre les
+  six projets**.
+  Le garde-fou existant (`scripts/build-necessaire.sh` en `ignoreCommand`, présent dans
+  Hubperso, DriveAI, CarAI, JobAI) **ne peut rien** ici : il s'exécute PENDANT le déploiement,
+  or le refus tombe à sa CRÉATION. Il économise du temps de build, pas du quota.
+  Piste à évaluer : `git.deploymentEnabled` dans `vercel.json`, qui est lu par l'intégration
+  Git — donc, [à vérifier], AVANT la création. Le mettre à `false` pour les branches `claude/**`
+  supprimerait les prévisualisations de ces branches. Compromis à trancher par Marc : plus de
+  prévisualisation cliquable sur une PR de Claude, en échange d'un quota qui tient la journée.
+
 - [ ] **CC-02 — `app-template` n'a pas de `main`.** Branche par défaut :
   `claude/hopeful-lovelace-4d09zx`, qui porte pourtant tout l'historique mergé. Un nom de
   branche généré par une session est devenu le tronc du dépôt. À renommer en `main`
