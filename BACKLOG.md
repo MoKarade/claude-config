@@ -2,35 +2,6 @@
 
 Ce qui est décidé mais pas fait. Une tâche = une case.
 
-## En attente d'un geste de Marc
-
-- [ ] **CC-01 — Poser le jeton du vérificateur de copies.** Le workflow, la logique pure et
-  ses 8 tests sont livrés (`scripts/copiesAJour.mjs`, `.github/workflows/copies.yml`). Il
-  **échoue tant que le secret n'est pas posé**, et c'est voulu : un run qui ne vérifie rien
-  ne doit pas ressembler à un run vert.
-  À créer : *Settings → Developer settings → Personal access tokens → Fine-grained*, portée
-  sur les 8 dépôts applicatifs, permission **Contents : Read-only**, rien d'autre. Puis
-  *claude-config → Settings → Secrets and variables → Actions → New repository secret*,
-  nom exact **`JETON_LECTURE_DEPOTS`**.
-
-- [ ] **CC-03 — BatchChef : décider du sort de la branche `main`. ⚠️ NE PAS SUPPRIMER EN
-  L'ÉTAT.** Marc avait autorisé la suppression le 21/08 sur ma description « un `main` mort
-  figé au 24 avril ». **Cette description était fausse** et je l'ai découvert en vérifiant
-  avant d'agir :
-  - `main` et `master` n'ont **aucun ancêtre commun** (`git merge-base` ne rend rien) — ce
-    sont deux histoires sans rapport, pas une copie périmée de l'autre.
-  - `main` porte **75 commits absents de `master`**, dont du travail réel : « Weekly
-    meal-planner (Trello-style) », « Reliability + cost-saving + unit/name sanity overhaul »,
-    `frontend/components/features/WeekPlannerPage.tsx` — un fichier qui **n'existe nulle
-    part sur `master`**.
-  - Le reste (~70 commits) sont des instantanés automatiques de données de recettes.
-
-  Autrement dit : `main` est l'ancien BatchChef, avant la reprise à zéro sous `web/`. Le
-  supprimer jetterait une base de code entière contenant au moins une fonctionnalité sans
-  équivalent aujourd'hui. Décision à prendre par Marc : archiver (tag + suppression),
-  récupérer le planificateur hebdomadaire, ou laisser en place.
-  Empreinte à conserver dans tous les cas : `main` = `6638f8b`, `master` = `f127336`.
-
 ## Conventions
 
 - [ ] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrit encore la §10 comme « Renvoi au
@@ -38,6 +9,21 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
   plus un import de la copie locale. Une ligne à corriger.
 
 ## Fait le 21/08/2026
+
+- [x] **CC-01 — Le vérificateur de copies tourne pour de vrai.** Le secret
+  `JETON_LECTURE_DEPOTS` a été posé par Marc le 21/08 à 19:42. Premier run vérifié dans sa
+  SORTIE, pas seulement à sa couleur : « Empreinte de la source : dded2ce9… / Les 8 copies
+  sont à jour. » Le trou est bouché dans les deux sens.
+- [x] **CC-03 — Le `main` de BatchChef est archivé, pas détruit.** ⚠️ **Ma recommandation
+  initiale de suppression reposait sur une description fausse** (« un `main` mort figé au
+  24 avril »). Vérification faite avant d'agir : aucun ancêtre commun avec `master`, et 75
+  commits absents du tronc dont `WeekPlannerPage.tsx`. Conservé sur
+  **`archive/pre-web-2026-04-24`** (pointe `6638f8b`), contenu vérifié depuis le distant.
+  ⚠️ **Il reste UN geste à faire, que je ne peux pas faire** : supprimer la branche `main`
+  de `batchchef-`. Le proxy git de la session refuse en `403` les suppressions de branche
+  comme les tags, et aucun outil ne le permet autrement. À faire par Marc :
+  *batchchef- → Branches → poubelle à côté de `main`*. L'archive est déjà en place, donc
+  rien n'est perdu si c'est fait maintenant.
 
 - [x] **CC-02 — `app-template` a maintenant une branche `main`.** Sa branche par défaut était
   `claude/hopeful-lovelace-4d09zx`, un nom généré par une session devenu le tronc. Renommée
