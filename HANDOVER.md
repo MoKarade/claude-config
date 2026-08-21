@@ -52,23 +52,43 @@ La friction est volontaire. Une copie modifiable sur place redevient huit conven
 différentes en trois mois — c'est ce qui est arrivé aux trois règles de cadrage, recopiées
 dans neuf `CLAUDE.md` le 20/08 et déjà divergentes le lendemain.
 
-## Ce que le contrôle NE couvre pas
+## Le contrôle dans l'autre sens
 
-⚠️ **Une modification de la source SANS propagation ne déclenche rien.** La CI d'un dépôt ne
-peut pas lire `claude-config` (dépôt privé, il faudrait un jeton dans chacun des huit). Le
-contrôle attrape une copie éditée sur place ; il n'attrape pas une source qui a avancé seule.
-Dit ici plutôt que passé sous silence — voir `BACKLOG.md`, `CC-01`.
+Le `sha256sum -c` de chaque dépôt attrape une copie **éditée sur place**. Il n'attrapait pas
+une **source modifiée ici sans propagation** — cas où les huit dépôts restent VERTS avec une
+version périmée, c'est-à-dire le mode de panne qui ressemble trait pour trait au succès.
+
+C'est ce que ferme `.github/workflows/copies.yml` : deux jobs, l'un qui teste la logique
+**sans réseau ni jeton** (`scripts/copiesAJour.mjs`, 8 tests), l'autre qui lit les huit copies
+via l'API et compare. Il tourne à chaque push touchant `conventions/`, et une fois par jour.
+
+⚠️ **Il ÉCHOUE tant que le secret `JETON_LECTURE_DEPOTS` n'est pas posé** — pas de
+`continue-on-error`, pas de garde `if: secrets…` qui sauterait le pas. Sauter le pas rendrait
+le job vert en n'ayant rien vérifié : exactement la panne qu'on cherche à rendre visible.
+Marche à suivre pour le poser : `BACKLOG.md`, `CC-01`.
+
+Les quatre états rendus sont **distincts** parce qu'ils appellent des gestes différents :
+`à jour` / `dérivée` / `absente` / `illisible`. Une lecture impossible (401, 403, 5xx) ne se
+range PAS dans « absente » — sinon on croirait qu'un dépôt n'a jamais reçu la convention
+alors que c'est la portée du jeton qui est en cause.
 
 ## Blocages / anomalies connues
 
-- **`app-template` n'a pas de branche `main`.** Sa branche par défaut est
-  `claude/hopeful-lovelace-4d09zx`, et c'est bien elle qui porte l'historique mergé
-  (PR #4 à #7). Constaté le 21/08/2026. À renommer, probablement — voir `BACKLOG.md`, `CC-02`.
-- **`batchchef-` a `master` ET `main`.** `master` est le tronc (son `CLAUDE.md` §3 le dit) ;
-  `main` est resté figé au 2026-04-24. Voir `BACKLOG.md`, `CC-03`.
+- ⚠️ **`batchchef-` : la branche `main` n'est PAS une vieille copie de `master`.** Les deux
+  n'ont **aucun ancêtre commun**, et `main` porte **75 commits absents de `master`**, dont un
+  planificateur hebdomadaire (`WeekPlannerPage.tsx`) qui n'existe nulle part sur le tronc
+  actuel. J'avais recommandé sa suppression sur une description fausse (« un `main` mort ») ;
+  la vérification faite avant d'agir l'a invalidée. **Rien n'a été supprimé.** Décision en
+  attente — `BACKLOG.md`, `CC-03`.
+- **`app-template` : réglé le 21/08.** Sa branche par défaut, `claude/hopeful-lovelace-4d09zx`,
+  a été renommée `main` par Marc.
 
 ## Historique des sessions
 
 - **2026-08-21** — Déploiement de `conventions/COMPTE-RENDU.md` : création, amendement sur
   trois arbitrages de Marc (porte de plan, marqueurs de statut, effort vs volume), audit des
   neuf `CLAUDE.md`, propagation dans les 8 dépôts applicatifs avec contrôle CI d'identité.
+  Puis, sur ses arbitrages du soir : vérificateur bidirectionnel des copies (CC-01), coupure
+  des prévisualisations Vercel sur `claude/*` (CC-06), plafonds de temps sur 20 jobs de CI
+  (CC-07), renvoi de `/lesson.md` corrigé (CC-05). Suppression du `main` de BatchChef
+  **arrêtée** après vérification (CC-03).
