@@ -101,6 +101,10 @@ rester en brouillon.
 - ✅ **Structure commune à tous les dépôts du hub : [`conventions/STRUCTURE-DEPOT.md`](./conventions/STRUCTURE-DEPOT.md).**
   Arborescence, squelette de `CLAUDE.md`, ordre des sections. Écrite là et nulle part
   ailleurs — un dépôt s'y conforme et y renvoie, il ne la recopie pas.
+- ✅ **Forme des comptes-rendus, commits, PR et docs générées :
+  [`conventions/COMPTE-RENDU.md`](./conventions/COMPTE-RENDU.md).** Fil de travail, résumé
+  final à structure fixe, vulgarisation, labels de confiance, cadrage en un seul batch.
+  Elle régit **la forme** ; le `CLAUDE.md` d'un dépôt garde **le contenu métier**.
 - ✅ ADR pour décisions architecturales : **`docs/adr/<NNNN>-<slug>.md`**.
   *(Cette ligne disait `decisions/` jusqu'au 20/08/2026, alors que DriveAI, JobAI et
   BatchChef écrivaient déjà dans `docs/adr/` — seul Hubperso suivait la règle. Corrigé dans
