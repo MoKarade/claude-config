@@ -4,6 +4,25 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
 
 ## Conventions
 
+- [ ] 🔧 **CC-05 — L'auto-merge est probablement mort dans SIX dépôts, et sa panne est
+  silencieuse.** Mesuré le 14/09 sur Hubperso : runs 361 à 364 d'`auto-merge.yml` tous en
+  échec entre 18h53 et 19h42 Z sur `Resource not accessible by integration
+  (…checkSuite.workflowRun)`. Cause : `actions: read` absent des `permissions:` —
+  `gh pr view --json statusCheckRollup` descend jusqu'à ce champ, qui relève de l'API Actions
+  et non de `checks`. **Deuxième fois** (le 21/08, c'étaient `checks: read` et
+  `statuses: read`). Échec FERMÉ les deux fois : aucune PR mal fusionnée, aucune PR fusionnée
+  du tout, et rien de rouge là où quelqu'un regarde.
+  **Corrigé** : CarAI ([#108](https://github.com/MoKarade/CarAI/pull/108), par une autre
+  session) et Hubperso ([#52](https://github.com/MoKarade/Hubperso/pull/52)), avec dans les
+  deux cas les cinq permissions verrouillées par `tests/autoMerge.test.ts`.
+  ⚠️ **Restent NON MESURÉS** : DriveAI, JobAI, BatchChef, FinanceAI, hub-contract,
+  app-template. `scripts/autoMerge.mjs` se déclare « identique dans les huit dépôts », donc
+  c'est probable — mais probable n'est pas mesuré, et l'écrire comme un fait serait
+  exactement l'erreur commise ce jour-là. À vérifier dépôt par dépôt, puis porter le
+  correctif ET la garde.
+  *(Sans conséquence sur la façon de travailler : Marc a confirmé le 14/09 que les sessions
+  fusionnent elles-mêmes. C'est du bruit d'Actions et un filet mort, pas un blocage.)*
+
 - [ ] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrit encore la §10 comme « Renvoi au
   `CLAUDE.md` global de Marc ».** Depuis le 21/08 la §10 est un renvoi à `COMPTE-RENDU.md`
   plus un import de la copie locale. Une ligne à corriger.
