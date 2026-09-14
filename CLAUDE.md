@@ -60,13 +60,14 @@ incident qui a montré que l'automatisation ne suffit pas — voir l'encadré pl
   14/09 : la #347 de DriveAI portait « revue flotte en cours, à intégrer avant de sortir du
   brouillon »). Leur brouillon est leur frein, pas le mien à lever.
 
-⚠️ **L'AUTO-MERGE DE CE PARC EST UN WORKFLOW MAISON, ET IL A ÉTÉ MORT DEUX FOIS.**
+⚠️ **L'AUTO-MERGE DE CE PARC EST UN WORKFLOW MAISON — LÀ OÙ IL EXISTE (relevé plus bas) —
+ET IL A ÉTÉ MORT DEUX FOIS.**
 
 Ce n'est pas le réglage natif de GitHub (`Allow auto-merge`), qui est d'ailleurs désactivé au
 niveau des dépôts — j'ai cru le 14/09 que c'était LE mécanisme, et j'ai conclu à tort que la
 règle du 21/08 n'avait jamais pu fonctionner. C'est faux : le mécanisme est
 `.github/workflows/auto-merge.yml` + `scripts/autoMerge.mjs` (décision PURE et testée, source
-dans ce dépôt, identique dans les huit), et il a tourné des centaines de fois.
+dans ce dépôt), et il a tourné des centaines de fois.
 
 Ce qui est vrai, et pire : **il tombe en silence.**
 
@@ -84,10 +85,37 @@ seul signal est un run d'Actions en échec que personne n'ouvre.
 manifeste par du silence. D'où la garde, désormais dans `tests/autoMerge.test.ts` de Hubperso
 et de CarAI : les cinq permissions sont verrouillées par le gate, qui lui est lu.
 
-⚠️ **Non vérifié au 14/09** : DriveAI, JobAI, BatchChef, FinanceAI, hub-contract et
-app-template — probablement la même permission absente, `autoMerge.mjs` se disant identique
-partout. À mesurer avant d'affirmer, et à porter. Diagnostic d'origine : CarAI #108 et
-Hubperso #52.
+⚠️ **MESURÉ LE 14/09 AU SOIR, ET LE RÉSULTAT CONTREDIT LA PHRASE QUI ÉTAIT ÉCRITE ICI.**
+Cette section annonçait un auto-merge « identique dans les huit dépôts » et six dépôts
+« probablement » atteints du même défaut, à porter. Les deux sont faux. La phrase venait d'un
+commentaire dans le fichier, pas d'une mesure — exactement le mode de panne que cette section
+raconte, reproduit dans la section qui le raconte.
+
+Relevé dépôt par dépôt (`.github/workflows/` lu sur la branche par défaut de chacun) :
+
+| Dépôt | Auto-merge | Atteint par `actions: read` ? |
+|---|---|---|
+| `Hubperso` | `auto-merge.yml` + `scripts/autoMerge.mjs` | **Oui** — corrigé (#52), et PROUVÉ : le run 371 a fusionné la #53 tout seul |
+| `CarAI` | idem | **Oui** — corrigé (#108) |
+| `DriveAI` | `auto-merge.yml`, **implémentation entièrement différente** | **Non** |
+| `JobAI`, `BatchChef`, `FinanceAI`, `hub-contract`, `app-template` | **aucun auto-merge** | **Non** — il n'y a rien à corriger |
+
+**Pourquoi DriveAI est indemne, et ce n'est pas de la chance.** Son workflow ne lit jamais
+`statusCheckRollup` : il se fie au fait que l'événement `workflow_run` de la CI soit
+`success`, puis interroge `isDraft`, `labels` et `isCrossRepository` un par un. Il ne
+descend donc jamais jusqu'à `checkSuite.workflowRun`, le champ qui relève de l'API Actions.
+475 runs, les cinq derniers verts. **Le bug n'est pas « une permission oubliée » : c'est une
+permission oubliée PAR UNE MANIÈRE PARTICULIÈRE de lire les checks.** Une correction portée
+à l'aveugle dans les huit dépôts aurait ajouté des permissions à des workflows qui n'en ont
+pas besoin, et surtout n'aurait rien appris.
+
+**Ce que la mesure révèle par ailleurs** : cinq dépôts sur huit n'ont aucun auto-merge. Ce
+n'est pas un incident — c'est un parc plus hétérogène que ce que ce fichier décrivait.
+Aucune conséquence pratique depuis que je fusionne moi-même, et rien n'est à construire sans
+que Marc le demande. C'est dit ici pour qu'une session ne cherche pas un workflow qui n'existe
+pas, ni ne conclue à une panne devant son absence.
+
+Diagnostic d'origine : CarAI #108 et Hubperso #52.
 
 C'est exactement pour ça que Marc a confirmé « fusionne seul » **après** avoir su que le
 mécanisme existait et venait d'être réparé : le merge par la session ne dépend d'aucun
