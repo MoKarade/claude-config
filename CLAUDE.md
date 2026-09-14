@@ -40,18 +40,58 @@
 descendre dans une session distante — vécu le 20/08/2026 : Marc a constaté « je ne vois pas
 la différence » alors que rien n'était arrivé jusqu'à la session.
 
-### Auto-merge partout, et le BROUILLON est le seul frein
+### Fusionner ce qui est vert, et le BROUILLON est le seul frein
 
-Décision de Marc, 21/08/2026. Vaut pour **toutes** les sessions Claude, dans les huit dépôts.
+Décision de Marc, 21/08/2026. **Confirmée le 14/09/2026** (« fusionne seul »), après un
+incident qui a montré que l'automatisation ne suffit pas — voir l'encadré plus bas. Vaut pour
+**toutes** les sessions Claude, dans les huit dépôts.
 
-- **J'active l'auto-merge natif de GitHub à l'ouverture de chaque PR.** Elle part dès que
-  les checks requis passent. Je n'attends pas de validation pour ce qui est vert.
+- **Je fusionne moi-même une PR dès que sa CI est verte et qu'elle n'est plus en brouillon**
+  (`merge_pull_request`, API REST). Je n'attends pas de validation pour ce qui est vert.
+- **Et je ne compte PAS sur l'auto-merge pour le faire à ma place.** Il existe, il est bon,
+  et il a déjà été mort deux fois sans que personne ne le voie (ci-dessous). Un mécanisme
+  dont la panne est silencieuse ne peut pas être la seule voie.
 - **Une PR en BROUILLON n'est jamais fusionnée.** Rien ne doit la repasser en « ready »
   automatiquement — c'était le défaut de l'auto-merge de DriveAI, corrigé le 21/08.
 - **La seule exception qui reste en brouillon : un ADR en statut « Proposé ».** Par
   définition il demande une décision de Marc. Tout le reste part.
-- **Je ne merge pas les PR des autres sessions.** Leur auto-merge s'en charge quand leur CI
-  est verte ; je ne peux pas savoir si leur travail est fini.
+- **Je ne merge pas les PR des autres sessions.** Je ne peux pas savoir si leur travail est
+  fini — une PR verte peut attendre une revue que sa session a elle-même demandée (vécu le
+  14/09 : la #347 de DriveAI portait « revue flotte en cours, à intégrer avant de sortir du
+  brouillon »). Leur brouillon est leur frein, pas le mien à lever.
+
+⚠️ **L'AUTO-MERGE DE CE PARC EST UN WORKFLOW MAISON, ET IL A ÉTÉ MORT DEUX FOIS.**
+
+Ce n'est pas le réglage natif de GitHub (`Allow auto-merge`), qui est d'ailleurs désactivé au
+niveau des dépôts — j'ai cru le 14/09 que c'était LE mécanisme, et j'ai conclu à tort que la
+règle du 21/08 n'avait jamais pu fonctionner. C'est faux : le mécanisme est
+`.github/workflows/auto-merge.yml` + `scripts/autoMerge.mjs` (décision PURE et testée, source
+dans ce dépôt, identique dans les huit), et il a tourné des centaines de fois.
+
+Ce qui est vrai, et pire : **il tombe en silence.**
+
+| Date | Ce qui manquait | Comment ça s'est manifesté |
+|---|---|---|
+| 21/08 | `checks: read`, `statuses: read` | Cinq essais, refus de merger, dès le premier run |
+| 14/09 | `actions: read` | Runs 361-364 de Hubperso en échec sur `Resource not accessible by integration (…checkSuite.workflowRun)`. Cinq PR vertes restées ouvertes ; il a fallu ouvrir les journaux pour comprendre |
+
+`gh pr view --json statusCheckRollup` descend jusqu'à `checkSuite.workflowRun`, qui relève de
+l'API **Actions** et non de `checks`. Les deux fois, échec FERMÉ : aucune PR mal fusionnée,
+mais aucune PR fusionnée du tout — et **rien de rouge là où quelqu'un regarde**, puisque le
+seul signal est un run d'Actions en échec que personne n'ouvre.
+
+**Une permission manquante ne se manifeste jamais par « il manque une permission ».** Elle se
+manifeste par du silence. D'où la garde, désormais dans `tests/autoMerge.test.ts` de Hubperso
+et de CarAI : les cinq permissions sont verrouillées par le gate, qui lui est lu.
+
+⚠️ **Non vérifié au 14/09** : DriveAI, JobAI, BatchChef, FinanceAI, hub-contract et
+app-template — probablement la même permission absente, `autoMerge.mjs` se disant identique
+partout. À mesurer avant d'affirmer, et à porter. Diagnostic d'origine : CarAI #108 et
+Hubperso #52.
+
+C'est exactement pour ça que Marc a confirmé « fusionne seul » **après** avoir su que le
+mécanisme existait et venait d'être réparé : le merge par la session ne dépend d'aucun
+workflow, donc d'aucune panne silencieuse.
 
 ⚠️ **Pourquoi le brouillon et pas un label.** Le 20/08, l'ADR-0045 de DriveAI — ouverte en
 brouillon, portant « statut Proposé, demande ta ratification » — a été fusionnée **63
