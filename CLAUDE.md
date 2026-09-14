@@ -40,18 +40,43 @@
 descendre dans une session distante — vécu le 20/08/2026 : Marc a constaté « je ne vois pas
 la différence » alors que rien n'était arrivé jusqu'à la session.
 
-### Auto-merge partout, et le BROUILLON est le seul frein
+### Fusionner ce qui est vert, et le BROUILLON est le seul frein
 
-Décision de Marc, 21/08/2026. Vaut pour **toutes** les sessions Claude, dans les huit dépôts.
+Décision de Marc, 21/08/2026. **Amendée le 14/09/2026, sur son arbitrage explicite** — voir
+l'encadré « ce qui a été mesuré » juste en dessous. Vaut pour **toutes** les sessions Claude,
+dans les huit dépôts.
 
-- **J'active l'auto-merge natif de GitHub à l'ouverture de chaque PR.** Elle part dès que
-  les checks requis passent. Je n'attends pas de validation pour ce qui est vert.
+- **Je fusionne moi-même une PR dès que sa CI est verte et qu'elle n'est plus en brouillon**
+  (`merge_pull_request`, API REST). Je n'attends pas de validation pour ce qui est vert.
+  J'active aussi l'auto-merge natif quand le dépôt l'autorise — mais c'est un bonus, pas le
+  mécanisme : voir ci-dessous.
+
+⚠️ **CE QUI A ÉTÉ MESURÉ LE 14/09, ET QUI A CHANGÉ CETTE RÈGLE.** La version du 21/08 disait
+« j'active l'auto-merge natif de GitHub à l'ouverture de chaque PR ». Elle **n'a jamais pu
+fonctionner** : le réglage `Allow auto-merge` (Settings → General → Pull Requests) est
+DÉSACTIVÉ au niveau du dépôt sur DriveAI, JobAI, BatchChef et Hubperso — l'appel
+d'activation répond littéralement « Auto-merge is not enabled for this repository ». Pendant
+trois semaines, tout ce qui a été fusionné l'a donc été **parce que Marc a cliqué**, alors
+que cette page décrivait une automatisation.
+
+C'est le même mode de panne que celui décrit vingt lignes plus haut — des règles écrites qui
+n'arrivent jamais là où elles doivent agir — et il s'est reproduit dans le document qui le
+raconte. Une règle qu'on croit active et qui ne l'est pas est pire qu'une règle absente :
+personne ne cherche pourquoi rien ne bouge.
+
+Arbitrage de Marc, mis devant les trois options (cocher le réglage sur les six dépôts /
+fusionner moi-même / garder le clic et corriger la doc) : **fusionner moi-même**. Donc c'est
+MOI qui appuie, pas un mécanisme de GitHub — et la conséquence est nommée : il n'y a plus de
+délai de grâce entre « la CI passe au vert » et « c'est sur `main` ». Le brouillon reste le
+seul frein, et il devient le SEUL.
 - **Une PR en BROUILLON n'est jamais fusionnée.** Rien ne doit la repasser en « ready »
   automatiquement — c'était le défaut de l'auto-merge de DriveAI, corrigé le 21/08.
 - **La seule exception qui reste en brouillon : un ADR en statut « Proposé ».** Par
   définition il demande une décision de Marc. Tout le reste part.
-- **Je ne merge pas les PR des autres sessions.** Leur auto-merge s'en charge quand leur CI
-  est verte ; je ne peux pas savoir si leur travail est fini.
+- **Je ne merge pas les PR des autres sessions.** Je ne peux pas savoir si leur travail est
+  fini — une PR verte peut attendre une revue que sa session a elle-même demandée (vécu le
+  14/09 : la #347 de DriveAI portait « revue flotte en cours, à intégrer avant de sortir du
+  brouillon »). Leur brouillon est leur frein, pas le mien à lever.
 
 ⚠️ **Pourquoi le brouillon et pas un label.** Le 20/08, l'ADR-0045 de DriveAI — ouverte en
 brouillon, portant « statut Proposé, demande ta ratification » — a été fusionnée **63

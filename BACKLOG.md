@@ -4,6 +4,19 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
 
 ## Conventions
 
+- [ ] 👤 **CC-05 — `Allow auto-merge` est désactivé sur les dépôts, et la règle du 21/08 le
+  supposait actif.** Mesuré le 14/09 : l'activation répond « Auto-merge is not enabled for
+  this repository » sur **DriveAI, JobAI, BatchChef et Hubperso** (FinanceAI n'a pas pu être
+  testée — son appel a été refusé pour une autre raison, la PR étant déjà entièrement verte).
+  La règle a donc décrit trois semaines durant une automatisation qui n'existait pas ; tout
+  ce qui a été fusionné l'a été **parce que Marc a cliqué**.
+  **Arbitrage de Marc, 14/09** : les sessions fusionnent elles-mêmes les PR vertes
+  (`merge_pull_request`, REST). Le `CLAUDE.md` est amendé en conséquence.
+  ⚠️ **Reste OPTIONNEL et à Marc** : cocher *Settings → General → Pull Requests → Allow
+  auto-merge* sur les six dépôts. Ça ne change plus rien au comportement décidé — mais ça
+  rendrait l'auto-merge natif disponible comme filet quand la CI est encore en cours, au lieu
+  d'obliger la session à attendre le vert pour appuyer.
+
 - [ ] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrit encore la §10 comme « Renvoi au
   `CLAUDE.md` global de Marc ».** Depuis le 21/08 la §10 est un renvoi à `COMPTE-RENDU.md`
   plus un import de la copie locale. Une ligne à corriger.
