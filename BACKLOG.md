@@ -4,24 +4,36 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
 
 ## Conventions
 
-- [ ] 🔧 **CC-05 — L'auto-merge est probablement mort dans SIX dépôts, et sa panne est
-  silencieuse.** Mesuré le 14/09 sur Hubperso : runs 361 à 364 d'`auto-merge.yml` tous en
-  échec entre 18h53 et 19h42 Z sur `Resource not accessible by integration
-  (…checkSuite.workflowRun)`. Cause : `actions: read` absent des `permissions:` —
+- [x] 🔧 **CC-08 — L'auto-merge tombe en silence : mesuré dans les huit dépôts, et le
+  résultat contredit l'hypothèse.** Mesuré le 14/09 sur Hubperso : runs 361 à 364
+  d'`auto-merge.yml` tous en échec entre 18h53 et 19h42 Z sur `Resource not accessible by
+  integration (…checkSuite.workflowRun)`. Cause : `actions: read` absent des `permissions:` —
   `gh pr view --json statusCheckRollup` descend jusqu'à ce champ, qui relève de l'API Actions
   et non de `checks`. **Deuxième fois** (le 21/08, c'étaient `checks: read` et
   `statuses: read`). Échec FERMÉ les deux fois : aucune PR mal fusionnée, aucune PR fusionnée
   du tout, et rien de rouge là où quelqu'un regarde.
   **Corrigé** : CarAI ([#108](https://github.com/MoKarade/CarAI/pull/108), par une autre
   session) et Hubperso ([#52](https://github.com/MoKarade/Hubperso/pull/52)), avec dans les
-  deux cas les cinq permissions verrouillées par `tests/autoMerge.test.ts`.
-  ⚠️ **Restent NON MESURÉS** : DriveAI, JobAI, BatchChef, FinanceAI, hub-contract,
-  app-template. `scripts/autoMerge.mjs` se déclare « identique dans les huit dépôts », donc
-  c'est probable — mais probable n'est pas mesuré, et l'écrire comme un fait serait
-  exactement l'erreur commise ce jour-là. À vérifier dépôt par dépôt, puis porter le
-  correctif ET la garde.
+  deux cas les cinq permissions verrouillées par `tests/autoMerge.test.ts`. **Prouvé** le
+  14/09 à 20:21 Z : le run 371 de Hubperso a fusionné la #53 tout seul, première fois depuis
+  trois semaines.
+  ⚠️ **Le portage annoncé ici n'avait pas lieu d'être, et c'est la leçon.** Cette entrée
+  disait « probablement la même permission absente dans six dépôts, `autoMerge.mjs` se
+  déclarant identique partout ». Mesure faite : **DriveAI a une implémentation entièrement
+  différente** (elle ne lit jamais `statusCheckRollup`, donc n'est pas concernée — 475 runs,
+  les cinq derniers verts) et **les cinq autres n'ont aucun auto-merge**. Il n'y avait rien à
+  porter. Une affirmation tirée d'un commentaire de fichier plutôt que d'une mesure, dans
+  l'entrée même qui raconte ce mode de panne. Détail dans la §2 du `CLAUDE.md`.
   *(Sans conséquence sur la façon de travailler : Marc a confirmé le 14/09 que les sessions
-  fusionnent elles-mêmes. C'est du bruit d'Actions et un filet mort, pas un blocage.)*
+  fusionnent elles-mêmes.)*
+
+- [ ] 🔧 **CC-09 — Cinq dépôts sur huit n'ont aucun auto-merge.** Constat de la mesure
+  ci-dessus : seuls `Hubperso`, `CarAI` et `DriveAI` en ont un, et DriveAI par une
+  implémentation qui lui est propre. Rien n'est cassé — les sessions fusionnent elles-mêmes
+  depuis le 14/09 — donc **ne rien construire sans que Marc le demande**. Inscrit pour qu'une
+  session ne cherche pas un workflow qui n'existe pas, ni ne conclue à une panne devant son
+  absence. La question à poser le jour où ça revient : un auto-merge de plus est-il utile
+  maintenant que le merge par la session ne dépend d'aucun workflow ?
 
 - [ ] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrit encore la §10 comme « Renvoi au
   `CLAUDE.md` global de Marc ».** Depuis le 21/08 la §10 est un renvoi à `COMPTE-RENDU.md`
