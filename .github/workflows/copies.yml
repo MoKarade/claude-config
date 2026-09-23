@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       # Ce job tourne TOUJOURS, y compris sur une PR d'une fourche et même si le secret
       # manque : la logique de décision se teste sans rien qui coûte un secret. C'est tout
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       # ⚠️ PAS de `continue-on-error`, et PAS de garde `if: secrets...` qui sauterait le pas
       # quand le jeton manque. Le script échoue lui-même s'il n'a pas de jeton — c'est
