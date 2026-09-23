@@ -12,8 +12,10 @@ on:
   push:
     branches: [main]
     paths: ["conventions/**"]
+  # Sur TOUTE PR, sans filtre de chemins : « Tests de la logique pure » est un check REQUIS
+  # par la protection de main (fusion auto). Filtré, il ne tournerait pas sur une PR qui ne
+  # touche pas conventions/, et elle resterait bloquée pour toujours (vécu : #13, 23/09/2026).
   pull_request:
-    paths: ["conventions/**"]
   # Et une fois par jour, parce qu'une copie peut être éditée dans SON dépôt sans que rien
   # ne bouge ici. 12 h UTC, comme les audits hebdomadaires des autres dépôts.
   schedule:
