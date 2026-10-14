@@ -46,6 +46,15 @@ Décision de Marc, 21/08/2026. **Confirmée le 14/09/2026** (« fusionne seul »
 incident qui a montré que l'automatisation ne suffit pas — voir l'encadré plus bas. Vaut pour
 **toutes** les sessions Claude, dans les huit dépôts.
 
+⚠️ **À trancher par Marc (14/10)** : cette règle (« je fusionne moi-même », `merge_pull_request`)
+est contredite par deux textes postérieurs. (1) La « fusion native » du 01/10, écrite dans les
+`CLAUDE.md` de Hubperso, CarAI, MemoryAI et DriveAI : `gh pr create` puis
+`gh pr merge --auto --squash`, « jamais de fusion à la main », et une PR qui touche un chemin
+de `CODEOWNERS` n'est jamais armée. (2) `atelier/CLAUDE.md` (23/09) : « Ne jamais fusionner à
+la main », et pour les apps `fusion_auto`, PR jamais en brouillon après la revue `relire_diff`.
+La règle ci-dessous n'est pas réécrite ; l'état factuel des mécanismes au 14/10 est dans le
+relevé plus bas.
+
 - **Je fusionne moi-même une PR dès que sa CI est verte et qu'elle n'est plus en brouillon**
   (`merge_pull_request`, API REST). Je n'attends pas de validation pour ce qui est vert.
 - **Et je ne compte PAS sur l'auto-merge pour le faire à ma place.** Il existe, il est bon,
@@ -91,7 +100,8 @@ Cette section annonçait un auto-merge « identique dans les huit dépôts » et
 commentaire dans le fichier, pas d'une mesure — exactement le mode de panne que cette section
 raconte, reproduit dans la section qui le raconte.
 
-Relevé dépôt par dépôt (`.github/workflows/` lu sur la branche par défaut de chacun) :
+Relevé dépôt par dépôt du **14/09** (`.github/workflows/` lu sur la branche par défaut de
+chacun) — *historique, dépassé : voir le relevé du 14/10 juste après* :
 
 | Dépôt | Auto-merge | Atteint par `actions: read` ? |
 |---|---|---|
@@ -99,6 +109,18 @@ Relevé dépôt par dépôt (`.github/workflows/` lu sur la branche par défaut 
 | `CarAI` | idem | **Oui** — corrigé (#108) |
 | `DriveAI` | `auto-merge.yml`, **implémentation entièrement différente** | **Non** |
 | `JobAI`, `BatchChef`, `FinanceAI`, `hub-contract`, `app-template` | **aucun auto-merge** | **Non** — il n'y a rien à corriger |
+
+**Relevé du 14/10/2026** (`.github/workflows/` et `CODEOWNERS` lus sur la tête par défaut de
+chaque dépôt ; ce qui précède n'est plus vrai pour aucune ligne) :
+
+| Dépôt | Mécanisme de fusion au 14/10 | `CODEOWNERS` |
+|---|---|---|
+| `Hubperso`, `CarAI`, `MemoryAI`, `DriveAI` | Fusion **native** GitHub, armée par la session (`gh pr merge --auto --squash`) ; kit maison retiré le 01/10 (« P1 ») | Oui (`.github/`, `scripts/hooks/`, `qualite/`…) |
+| `hub-contract`, `claude-config` | `fusion-auto.yml` (23/09) : arme la fusion native sur toute PR non brouillon | Non |
+| `FinanceAI`, `BatchChef` | Kit de l'Atelier : `auto-merge.yml` + `armement-auto-merge.yml` | Non |
+| `JobAI` | Kit de l'Atelier **et** `fusion-auto.yml` | Non |
+| `app-template` | `auto-merge.yml` + `scripts/autoMerge.mjs` (maison, porté de Hubperso le 23/09) | Non |
+| `atelier` | `auto-merge.yml` (kit de l'Atelier) | Oui |
 
 **Pourquoi DriveAI est indemne, et ce n'est pas de la chance.** Son workflow ne lit jamais
 `statusCheckRollup` : il se fie au fait que l'événement `workflow_run` de la CI soit
@@ -109,7 +131,7 @@ permission oubliée PAR UNE MANIÈRE PARTICULIÈRE de lire les checks.** Une cor
 à l'aveugle dans les huit dépôts aurait ajouté des permissions à des workflows qui n'en ont
 pas besoin, et surtout n'aurait rien appris.
 
-**Ce que la mesure révèle par ailleurs** : cinq dépôts sur huit n'ont aucun auto-merge. Ce
+**Ce que la mesure du 14/09 révélait par ailleurs** *(historique : au 14/10, tous les dépôts ont un mécanisme, cf. relevé ci-dessus)* : cinq dépôts sur huit n'avaient aucun auto-merge. Ce
 n'est pas un incident — c'est un parc plus hétérogène que ce que ce fichier décrivait.
 Aucune conséquence pratique depuis que je fusionne moi-même, et rien n'est à construire sans
 que Marc le demande. C'est dit ici pour qu'une session ne cherche pas un workflow qui n'existe
@@ -211,20 +233,24 @@ Liste complète : `ls ~/.claude/agents/`.
 
 ## 9. Projets actifs
 
-L'écosystème du hub perso — huit dépôts, tous sur `hubperso.com` ou un sous-domaine.
+L'écosystème du hub perso — au 14/10/2026, dix dépôts : les huit historiques, plus
+`MemoryAI` (app) et `atelier` (l'outillage de développement). Versions : source = le
+`package.json` de chaque dépôt.
 *(Cette table listait `MoKarade/hub` en Python/FastAPI/Ollama jusqu'au 20/08/2026 : un projet
 qui n'est aucun des huit, dans une stack qu'aucun n'utilise.)*
 
 | Dépôt | Rôle | Stack |
 |---|---|---|
-| `Hubperso` | Le tableau de bord — consomme le contrat, ne le définit pas | Next.js 15 · Neon · Auth.js v5 |
+| `Hubperso` | Le tableau de bord — consomme le contrat, ne le définit pas | Next.js 16 · Neon · Auth.js v5 |
 | `hub-contract` | Le contrat partagé (types + schémas Zod) | TypeScript · Zod |
-| `app-template` | Le squelette à forker pour une nouvelle app | Next.js 15 · Auth.js v5 |
-| `FinanceAI` | Patrimoine, projections, fiscalité | Next.js · Postgres |
+| `app-template` | Le squelette à forker pour une nouvelle app | Next.js 16 · Auth.js v5 |
+| `FinanceAI` | Patrimoine, projections, fiscalité | React 19 · Vite 8 (navigateur) · `api/` + `mcp/` |
 | `DriveAI` | Classement automatique du Drive | Apps Script + Vercel + SPA |
-| `BatchChef` | Batchs de cuisine, listes d'épicerie | Next.js 15 · Neon · MCP |
-| `JobAI` | Veille d'emploi et suivi de candidatures | Next.js 15 · Neon · MCP |
-| `CarAI` | Télémétrie du véhicule (Smartcar, Toyota) | Next.js 15 · Neon · MCP |
+| `BatchChef` | Batchs de cuisine, listes d'épicerie | Next.js 16 · Neon · MCP |
+| `JobAI` | Veille d'emploi et suivi de candidatures | Next.js 16 · Neon · MCP |
+| `CarAI` | Télémétrie du véhicule (Smartcar, Toyota) | Next.js 16 · Neon · MCP |
+| `MemoryAI` | La mémoire de l'écosystème (faits typés, chiffrés) | Next.js 16 · Neon · MCP |
+| `atelier` | L'usine de développement (cockpit, agence, hooks, kit de portes) — pas une app du hub | Python · PowerShell · Node |
 
 **Accès** : la connexion est unique (cookie partagé sur `.hubperso.com`), l'autorisation est
 **par app** et se gère depuis `hubperso.com/administration`. `AUTHORIZED_EMAIL` n'est pas une

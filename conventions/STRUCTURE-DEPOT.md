@@ -18,6 +18,13 @@
 | `app-template` | Le squelette d'une nouvelle app. Ce qu'on forke. |
 | `FinanceAI` · `DriveAI` · `BatchChef` · `JobAI` · `CarAI` | Les apps. |
 
+> **Constat au 14/10/2026** (texte de la convention non modifié) : `MemoryAI` est une app de
+> plus, absente de cette liste ; le dépôt `atelier` (outillage) n'est pas couvert. Et la
+> plupart des apps (Hubperso, FinanceAI, DriveAI, BatchChef, JobAI, CarAI, MemoryAI) ont
+> depuis réduit leur `CLAUDE.md` à un index court et déplacé les sections ci-dessous dans
+> `docs/claude/` ou `docs/reference-claude.md` ; seuls `hub-contract` et `app-template`
+> gardent le squelette numéroté en entier.
+
 ## Arborescence
 
 ```
@@ -59,7 +66,7 @@ qu'il n'en a pas.
 | 7 | **Intégration hub** | Ce que l'app publie, et le jeton dans ses DEUX sens. |
 | 8 | **Documentation (où vit quoi)** | Une ligne par document, ce qu'il contient. |
 | 9 | **Leçons apprises** | Les règles durables, tirées de vrais incidents. |
-| 10 | **Style** | Renvoi au `CLAUDE.md` global de Marc. |
+| 10 | **Style** | Renvoi à `conventions/COMPTE-RENDU.md` + import de la copie locale `@docs/COMPTE-RENDU.md`. |
 
 ### Comment écrire un principe non négociable
 
