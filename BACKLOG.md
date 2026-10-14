@@ -27,7 +27,9 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
   *(Sans conséquence sur la façon de travailler : Marc a confirmé le 14/09 que les sessions
   fusionnent elles-mêmes.)*
 
-- [ ] 🔧 **CC-09 — Cinq dépôts sur huit n'ont aucun auto-merge.** Constat de la mesure
+- [ ] 🔧 **CC-09 — Cinq dépôts sur huit n'ont aucun auto-merge.** ⚠️ *Périmé au 14/10/2026 :
+  chaque dépôt a désormais un mécanisme de fusion (relevé dans la §2 du `CLAUDE.md`) ; la
+  question restante est celle de la note « À trancher » de la §2, pas un workflow manquant.* Constat de la mesure
   ci-dessus : seuls `Hubperso`, `CarAI` et `DriveAI` en ont un, et DriveAI par une
   implémentation qui lui est propre. Rien n'est cassé — les sessions fusionnent elles-mêmes
   depuis le 14/09 — donc **ne rien construire sans que Marc le demande**. Inscrit pour qu'une
@@ -35,9 +37,14 @@ Ce qui est décidé mais pas fait. Une tâche = une case.
   absence. La question à poser le jour où ça revient : un auto-merge de plus est-il utile
   maintenant que le merge par la session ne dépend d'aucun workflow ?
 
-- [ ] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrit encore la §10 comme « Renvoi au
-  `CLAUDE.md` global de Marc ».** Depuis le 21/08 la §10 est un renvoi à `COMPTE-RENDU.md`
-  plus un import de la copie locale. Une ligne à corriger.
+- [x] **CC-04 — Le tableau de `STRUCTURE-DEPOT.md` décrivait encore la §10 comme « Renvoi au
+  `CLAUDE.md` global de Marc ».** Corrigé le 14/10/2026 : renvoi à `COMPTE-RENDU.md` plus
+  import de la copie locale.
+
+- [ ] 🔧 **CC-10 — `scripts/verifierCopies.mjs` ne vérifie pas la copie de `MemoryAI`.**
+  Bug préexistant constaté le 14/10/2026 : `MemoryAI` porte `docs/COMPTE-RENDU.md` et son
+  contrôle `sha256sum -c`, mais la liste `DEPOTS` du script n'a que 8 entrées. Une source
+  modifiée ici sans propagation vers MemoryAI resterait invisible. Non corrigé (code).
 
 ## Fait le 21/08/2026
 

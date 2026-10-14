@@ -1,7 +1,30 @@
 # HANDOVER — claude-config
 
 > L'état RÉEL des conventions communes et comment le vérifier. À lire en premier.
-> **Dernière mise à jour** : 2026-08-21.
+> **Dernière mise à jour** : 2026-10-14 (section ci-dessous) ; le reste du fichier date du
+> 2026-08-21 sauf mention contraire.
+
+## État au 14/10/2026
+
+- **Ce qui tourne** : la source `conventions/COMPTE-RENDU.md` a l'empreinte `97e36acb…`
+  (`sha256sum`, 14/10). **Neuf** dépôts en portent une copie identique, contrôlée par
+  `sha256sum -c` dans leur `ci.yml` : les huit d'origine **plus `MemoryAI`**. Le dépôt
+  `atelier` n'en a pas.
+- **Livré depuis le 21/08** (d'après `git log`) : §0 de la convention (règle de volume, #9) ;
+  §2 du `CLAUDE.md` sur l'auto-merge mort deux fois et « fusionne seul » (#11, 14/09) ;
+  CC-08 (#12) ; Node 24 + `fusion-auto.yml` + tests requis lancés sur toute PR (#13, 23/09).
+- **Fusion de ce dépôt** : `.github/workflows/fusion-auto.yml` arme la fusion native GitHub
+  sur toute PR non brouillon ; le check « Tests de la logique pure » de `copies.yml` est
+  requis par la protection de `main` (selon le commentaire de `copies.yml`).
+- **À surveiller** : `scripts/verifierCopies.mjs` ne lit que **8** dépôts — la copie de
+  `MemoryAI` n'est pas vérifiée dans l'autre sens (BACKLOG, CC-10). La branche `main` de
+  `batchchef-` existe toujours (même SHA `6638f8b` que l'archive, mesuré le 14/10 ; CC-03).
+- ⚠️ **À trancher par Marc (14/10)** : la règle « je fusionne moi-même » (§2 du `CLAUDE.md`)
+  est contredite par la fusion native du 01/10 et par `atelier/CLAUDE.md` (« jamais à la
+  main ») ; voir la note dans la §2. Relevé factuel des mécanismes par dépôt au 14/10 : même
+  endroit.
+- **Gel décidé par Marc le 14/10 : aucun nouveau travail sur les apps tant que le plan de
+  réduction du temps des PR est en cours.**
 
 ## TL;DR
 
@@ -12,7 +35,7 @@ Ce dépôt porte deux conventions communes aux neuf dépôts de l'écosystème. 
 | Convention | Source | Copie dans les dépôts | Contrôle |
 |---|---|---|---|
 | `conventions/STRUCTURE-DEPOT.md` | ici | aucune — c'est une convention de FORME de fichier, appliquée à la main | aucun |
-| `conventions/COMPTE-RENDU.md` | ici | `docs/COMPTE-RENDU.md` dans les 8 dépôts applicatifs | `sha256sum -c` dans chaque `ci.yml` |
+| `conventions/COMPTE-RENDU.md` | ici | `docs/COMPTE-RENDU.md` dans les 8 dépôts applicatifs (9 au 14/10 : + `MemoryAI`) | `sha256sum -c` dans chaque `ci.yml` |
 
 ## Le fait qui explique tout le montage
 
@@ -77,7 +100,8 @@ alors que c'est la portée du jeton qui est en cause.
 
 ## Blocages / anomalies connues
 
-- **`batchchef-` : réglé le 21/08, mais un geste reste à faire.** L'ancienne branche `main`
+- **`batchchef-` : réglé le 21/08, mais un geste reste à faire** (toujours vrai le 14/10 :
+  `refs/heads/main` existe encore sur `origin`). L'ancienne branche `main`
   — 75 commits, aucun ancêtre commun avec `master` — est conservée sur
   `archive/pre-web-2026-04-24`. ⚠️ La branche `main` elle-même **existe encore** : le proxy
   git de session refuse les suppressions de branche en `403`. À supprimer à la main par Marc.
